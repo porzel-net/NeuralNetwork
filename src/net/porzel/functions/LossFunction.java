@@ -61,7 +61,7 @@ public abstract class LossFunction {
                 double loss = 0.0;
 
                 for (int i = 0; i < targetOutput.length; i++) {
-                    loss += targetOutput[i] * Math.log(output[i]) + (1 - targetOutput[i]) * Math.log(1 - output[i]);
+                    loss += targetOutput[i] * Math.log(output[i]);
                 }
 
                 return -loss / targetOutput.length;
@@ -73,4 +73,77 @@ public abstract class LossFunction {
             }
         };
     }
+
+    public static LossFunction BINARY_CROSS_ENTROPY_LOSS() {
+        return new LossFunction() {
+            @Override
+            public double function(double[] output, double[] targetOutput) {
+                double loss = 0.0;
+
+                for (int i = 0; i < targetOutput.length; i++) {
+                    loss += targetOutput[i] * Math.log(output[i]) + (1 - targetOutput[i]) * Math.log(1 - output[i]);
+                }
+
+                return -loss / targetOutput.length;
+            }
+
+            @Override
+            public String toString() {
+                return "BINARY_CROSS_ENTROPY_LOSS";
+            }
+        };
+    }
+
+    public static double binaryCrossEntropyLoss(double[] output, double[] target) {
+        int n = output.length;
+        double loss = 0;
+        for (int i = 0; i < n; i++) {
+            loss += target[i] * Math.log(output[i]) + (1 - target[i]) * Math.log(1 - output[i]);
+        }
+        loss = -loss / n;
+        return loss;
+    }
+
+    /*public static LossFunction HINGE_LOSS() {
+        return new LossFunction() {
+            @Override
+            public double function(double output, double targetOutput) {
+                return Math.max(0, 1 - targetOutput * output);
+            }
+
+            @Override
+            public String toString() {
+                return "HINGE_LOSS";
+            }
+        };
+    }
+
+    public static LossFunction LOG_LIKELIHOOD_LOSS() {
+        return new LossFunction() {
+            @Override
+            public double function(double output, double targetOutput) {
+                return -targetOutput * Math.log(output);
+            }
+
+            @Override
+            public String toString() {
+                return "LOG_LIKELIHOOD_LOSS";
+            }
+        };
+    }
+
+
+    public static LossFunction DIFFERENTIAL_ERROR() {
+        return new LossFunction() {
+            @Override
+            public double function(double output, double targetOutput) {
+                return targetOutput - output;
+            }
+
+            @Override
+            public String toString() {
+                return "DIFFERENTIAL_ERROR";
+            }
+        };
+    }*/
 }

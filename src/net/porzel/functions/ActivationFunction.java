@@ -54,7 +54,7 @@ public abstract class ActivationFunction {
      * efficiency, speed, and sparsity, which can help with model interpretability and reduce
      * overfitting. However, it has some issues like dead neurons and dying ReLUs, which can lead
      * to a loss of model capacity and make it unsuitable for certain types of data.
-     * */
+    * */
     public static ActivationFunction RELU(){
         return new ActivationFunction() {
             @Override
@@ -76,7 +76,7 @@ public abstract class ActivationFunction {
     }
 
     /**
-     * The Leaky ReLU activation function is a variant of the popular Rectified Linear Unit (ReLU)
+    * The Leaky ReLU activation function is a variant of the popular Rectified Linear Unit (ReLU)
      * activation function. It is designed to address the "dying ReLU" problem that occurs when the
      * ReLU function outputs zero for negative input values, effectively killing the activation of
      * that neuron. The Leaky ReLU function assigns a small slope to negative input values, which
