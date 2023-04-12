@@ -33,7 +33,6 @@ public class ConvolutionalNeuralNetwork {
     //INFO
     private int totalTrainedEpochs = 0;
     private int trainedEpochs = 0;
-    private Thread neuralNetworkStatusPrinter;
     private final int[] layers;
 
     //THREADS
@@ -139,7 +138,7 @@ public class ConvolutionalNeuralNetwork {
     }
 
     /**
-     Sets the cost function used by this convolutional neural network. The cost function is used to compute the overall cost of the network over all of the training data.
+     Sets the cost function used by this convolutional neural network. The cost function is used to compute the overall cost of the network over all the training data.
      @param costFunction The cost function to use.
      @return This convolutional neural network with the updated cost function.
      */
@@ -323,29 +322,29 @@ public class ConvolutionalNeuralNetwork {
 
         trainedEpochs = 0;
 
-        neuralNetworkStatusPrinter = new Thread(new Runnable() {
-            int progressBarLength = 60;
+        Thread neuralNetworkStatusPrinter = new Thread(new Runnable() {
+            final int progressBarLength = 60;
 
             private void updateProgressBar() {
-                String output = "";
+                StringBuilder output = new StringBuilder();
 
-                output += "\r";
+                output.append("\r");
 
                 double percentage = (double) trainedEpochs / epochs;
 
-                output += "Neuronal Network   " + Math.round(percentage * 100) + "% [";
+                output.append("Neuronal Network   ").append(Math.round(percentage * 100)).append("% [");
 
                 for (int i = 0; i < Math.round(progressBarLength * percentage) - 1; i++) {
-                    output += "=";
+                    output.append("=");
                 }
 
-                output += ">";
+                output.append(">");
 
                 for (int i = 0; i < Math.round(progressBarLength * (1 - percentage)); i++) {
-                    output += " ";
+                    output.append(" ");
                 }
 
-                output += "] " + trainedEpochs + " / " + epochs + " (" + (System.currentTimeMillis() - startTime) / 1000 + "s)";
+                output.append("] ").append(trainedEpochs).append(" / ").append(epochs).append(" (").append((System.currentTimeMillis() - startTime) / 1000).append("s)");
 
                 System.out.print(output);
 
@@ -355,13 +354,9 @@ public class ConvolutionalNeuralNetwork {
                     e.printStackTrace();
                 }
 
-                output = "";
+                output = new StringBuilder();
 
-                output += "\r";
-
-                for (int i = 0; i < 100; i++) {
-                    output += "";
-                }
+                output.append("\r");
 
                 System.out.print(output);
             }
@@ -385,6 +380,7 @@ public class ConvolutionalNeuralNetwork {
         while (trainedEpochs < epochs) {
             train();
         }
+
 
         while (neuralNetworkStatusPrinter.isAlive()) {}
     }

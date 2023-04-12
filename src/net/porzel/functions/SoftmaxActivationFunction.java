@@ -38,7 +38,6 @@ public class SoftmaxActivationFunction {
         double[] y = function(x);
         double[] derivatives = new double[x.length];
         for (int i = 0; i < x.length; i++) {
-            double sum = 0;
             for (int j = 0; j < x.length; j++) {
                 if (i == j) {
                     derivatives[i] += y[i] * (1 - y[i]);

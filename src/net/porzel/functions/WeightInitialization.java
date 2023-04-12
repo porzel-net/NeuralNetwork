@@ -50,7 +50,7 @@ public abstract class WeightInitialization {
     /**
      * The weight initialization function Lecun, also known as LeCun initialization,
      * is designed to work well with the hyperbolic tangent (tanh) activation function.
-     * Tanh is a popular choice for neural networks due to its nonlinearity and its ability
+     * Tanh is a popular choice for neural networks due to its non-linearity and its ability
      * to map inputs to outputs between -1 and 1. Lecun initialization helps to ensure that
      * the tanh activation function is operating within its linear region,
      * allowing for efficient and stable learning.
@@ -134,7 +134,7 @@ public abstract class WeightInitialization {
      * is designed to work well with symmetric activation functions such as the hyperbolic
      * tangent (tanh) and logistic sigmoid functions. These activation functions have a symmetric
      * S-shape, with output values ranging from -1 to 1 for tanh and 0 to 1 for sigmoid.
-     * Xavier initialization helps to ensure that the activation function is operating
+     * Xavier's initialization helps to ensure that the activation function is operating
      * within its linear region, allowing for efficient and stable learning. The main idea
      * behind Xavier initialization is to set the scale of the weights based on the number of
      * input and output connections of each neuron, which can help to prevent the vanishing or

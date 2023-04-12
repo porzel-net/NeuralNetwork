@@ -11,16 +11,12 @@ public abstract class LossFunction {
      @throws RuntimeException if the loss function name cannot be resolved
      */
     public static LossFunction resolveLossFunction(String function) {
-        if(function.equals("MEAN_SQUARED_ERROR")) {
-            return LossFunction.MEAN_SQUARED_ERROR();
-        } else if (function.equals("CROSS_ENTROPY_LOSS")) {
-            return LossFunction.CROSS_ENTROPY_LOSS();
-        } else if(function.equals("NONE")) {
-            return null;
-        }
-        else {
-            throw new RuntimeException("Loss function couldn't be resolved!");
-        }
+        return switch (function) {
+            case "MEAN_SQUARED_ERROR" -> LossFunction.MEAN_SQUARED_ERROR();
+            case "CROSS_ENTROPY_LOSS" -> LossFunction.CROSS_ENTROPY_LOSS();
+            case "NONE" -> null;
+            default -> throw new RuntimeException("Loss function couldn't be resolved!");
+        };
     }
 
     /**

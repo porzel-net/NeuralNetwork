@@ -18,16 +18,12 @@ public abstract class CostFunction {
      @throws RuntimeException if the cost function name cannot be resolved
      */
     public static CostFunction resolveCostFunction(String function) {
-        if(function.equals("MEAN_SQUARED_ERROR")) {
-            return CostFunction.MEAN_SQUARED_ERROR();
-        } else if (function.equals("MEDIAN")) {
-            return CostFunction.MEDIAN();
-        } else if(function.equals("NONE")) {
-            return null;
-        }
-        else {
-            throw new RuntimeException("Cost function couldn't be resolved!");
-        }
+        return switch (function) {
+            case "MEAN_SQUARED_ERROR" -> CostFunction.MEAN_SQUARED_ERROR();
+            case "MEDIAN" -> CostFunction.MEDIAN();
+            case "NONE" -> null;
+            default -> throw new RuntimeException("Cost function couldn't be resolved!");
+        };
     }
 
 

@@ -35,18 +35,13 @@ public abstract class ActivationFunction {
      @throws RuntimeException If the input string is not one of the valid activation functions.
      */
     public static ActivationFunction resolveActivationFunction(String function) {
-        if(function.equals("RELU")) {
-            return ActivationFunction.RELU();
-        } else if (function.equals("LEAKY_RELU")) {
-            return ActivationFunction.LEAKY_RELU();
-        } else if (function.equals("SIGMOID")) {
-            return ActivationFunction.SIGMOID();
-        } else if (function.equals("TANH")) {
-            return ActivationFunction.TANH();
-        }
-        else {
-            throw new RuntimeException("Activation function couldn't be resolved!");
-        }
+        return switch (function) {
+            case "RELU" -> ActivationFunction.RELU();
+            case "LEAKY_RELU" -> ActivationFunction.LEAKY_RELU();
+            case "SIGMOID" -> ActivationFunction.SIGMOID();
+            case "TANH" -> ActivationFunction.TANH();
+            default -> throw new RuntimeException("Activation function couldn't be resolved!");
+        };
     }
 
     /**
@@ -143,7 +138,7 @@ public abstract class ActivationFunction {
      * produce outputs between -1 and 1, making it suitable for modeling data that has negative
      * and positive values. Its symmetric shape also allows for better representation of data
      * with both positive and negative features. However, the TANH function suffers from the
-     * vanishing gradient problem, where gradients become extremely small, making it difficult
+     * vanishing gradient problem, where gradients become extreme tiny, making it difficult
      * for the network to learn. Additionally, TANH tends to saturate when inputs are large,
      * which can cause outputs to remain at extreme values, leading to slower learning and
      * potential numerical instability.
