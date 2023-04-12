@@ -14,6 +14,7 @@ public abstract class LossFunction {
         return switch (function) {
             case "MEAN_SQUARED_ERROR" -> LossFunction.MEAN_SQUARED_ERROR();
             case "CROSS_ENTROPY_LOSS" -> LossFunction.CROSS_ENTROPY_LOSS();
+            case "BINARY_CROSS_ENTROPY_LOSS" -> LossFunction.BINARY_CROSS_ENTROPY_LOSS();
             case "NONE" -> null;
             default -> throw new RuntimeException("Loss function couldn't be resolved!");
         };

@@ -14,7 +14,6 @@ public class ConvolutionalNeuralNetwork {
     private final double[][][] weights;
     private final double[][] biases;
     private double learningRate = 0.01;
-    private double[] loses;
 
     //FUNCTIONS
     private ActivationFunction activationFunction;
@@ -102,7 +101,7 @@ public class ConvolutionalNeuralNetwork {
     }
 
 
-    private ConvolutionalNeuralNetwork(int[] layers, double[][][] weights, double[][] biases, double learningRate, double dropout, ActivationFunction activationFunction, LossFunction lossFunction, int totalTrainedEpochs) {
+    private ConvolutionalNeuralNetwork(int[] layers, double[][][] weights, double[][] biases, double learningRate, double dropout, ActivationFunction activationFunction, LossFunction lossFunction, CostFunction costFunction, int totalTrainedEpochs) {
         this.layers = layers;
         this.weights = weights;
         this.biases = biases;
@@ -110,6 +109,7 @@ public class ConvolutionalNeuralNetwork {
         this.dropout = dropout;
         this.activationFunction = activationFunction;
         this.lossFunction = lossFunction;
+        this.costFunction = costFunction;
         this.totalTrainedEpochs = totalTrainedEpochs;
     }
 
@@ -496,10 +496,14 @@ public class ConvolutionalNeuralNetwork {
             out.writeDouble(learningRate);
             out.writeUTF(activationFunction.toString());
 
-            if(lossFunction == null)
+            if(lossFunction == null) {
                 out.writeUTF("NONE");
-            else
+                out.writeUTF("NONE");
+            }
+            else {
                 out.writeUTF(lossFunction.toString());
+                out.writeUTF(costFunction.toString());
+            }
 
             out.writeDouble(dropout);
             out.writeInt(totalTrainedEpochs);
@@ -556,11 +560,12 @@ public class ConvolutionalNeuralNetwork {
             double learningRate = in.readDouble();
             ActivationFunction activationFunction = ActivationFunction.resolveActivationFunction(in.readUTF());
             LossFunction lossFunction = LossFunction.resolveLossFunction(in.readUTF());
+            CostFunction costFunction = CostFunction.resolveCostFunction(in.readUTF());
             double dropout = in.readDouble();
             int totalTrainedEpochs = in.readInt();
 
 
-            return new ConvolutionalNeuralNetwork(layers, weights, biases, learningRate, dropout, activationFunction, lossFunction, totalTrainedEpochs);
+            return new ConvolutionalNeuralNetwork(layers, weights, biases, learningRate, dropout, activationFunction, lossFunction, costFunction, totalTrainedEpochs);
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
