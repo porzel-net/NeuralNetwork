@@ -1,10 +1,53 @@
 package net.porzel.functions;
 
+/**
+ This is an abstract class for an activation function used in neural networks.
+ The activation function is responsible for introducing non-linearity to the network
+ and is used to determine the output of a node given its input.
+ */
 public abstract class ActivationFunction {
-
+    /**
+     This method represents the activation function that maps the input to the output of a neuron.
+     The input to the function is an array of doubles and the function should modify the values in
+     the array to represent the output of the activation function. The output of the function
+     should be in the range [0,1] for sigmoidal functions or [-1,1] for hyperbolic tangent
+     functions, depending on the implementation.
+     @param x the input to the activation function
+     */
     public abstract void function(double[] x);
 
+    /**
+     This method returns the derivative of the activation function with respect to its input x.
+     The derivative is used in backpropagation to calculate the error signal propagated
+     from the output layer to the input layer. The input to the function is a double and
+     the output should be in the range [0,1] for sigmoidal functions or [-1,1] for
+     hyperbolic tangent functions, depending on the implementation.
+     @param x the input to the activation function
+     @return the derivative of the activation function at x
+     */
     public abstract double derivative(double x);
+
+    /**
+
+     Resolves the activation function based on the given string input.
+     @param function The name of the activation function to be resolved. The valid inputs are "RELU", "LEAKY_RELU", "SIGMOID", and "TANH".
+     @return The corresponding ActivationFunction enum value.
+     @throws RuntimeException If the input string is not one of the valid activation functions.
+     */
+    public static ActivationFunction resolveActivationFunction(String function) {
+        if(function.equals("RELU")) {
+            return ActivationFunction.RELU();
+        } else if (function.equals("LEAKY_RELU")) {
+            return ActivationFunction.LEAKY_RELU();
+        } else if (function.equals("SIGMOID")) {
+            return ActivationFunction.SIGMOID();
+        } else if (function.equals("TANH")) {
+            return ActivationFunction.TANH();
+        }
+        else {
+            throw new RuntimeException("Activation function couldn't be resolved!");
+        }
+    }
 
     /**
      * ReLU is a popular activation function in deep learning. Its advantages include computational
@@ -23,6 +66,11 @@ public abstract class ActivationFunction {
             @Override
             public double derivative(double x) {
                 return x > 0 ? 1 : 0;
+            }
+
+            @Override
+            public String toString() {
+                return "RELU";
             }
         };
     }
@@ -50,6 +98,11 @@ public abstract class ActivationFunction {
             public double derivative(double x) {
                 return x > 0 ? 1 : 0.01;
             }
+
+            @Override
+            public String toString() {
+                return "LEAKY_RELU";
+            }
         };
     }
 
@@ -66,6 +119,7 @@ public abstract class ActivationFunction {
      * */
     public static ActivationFunction SIGMOID(){
         return new ActivationFunction() {
+
             @Override
             public void function(double[] x) {
                 for (int i = 0; i < x.length; i++)
@@ -75,6 +129,11 @@ public abstract class ActivationFunction {
             @Override
             public double derivative(double x) {
                 return x * (1 - x);
+            }
+
+            @Override
+            public String toString() {
+                return "SIGMOID";
             }
         };
     }
@@ -91,6 +150,7 @@ public abstract class ActivationFunction {
      * */
     public static ActivationFunction TANH(){
         return new ActivationFunction() {
+
             @Override
             public void function(double[] x) {
                 for (int i = 0; i < x.length; i++)
@@ -101,7 +161,11 @@ public abstract class ActivationFunction {
             public double derivative(double x) {
                 return 1 - Math.pow(Math.tanh(x), 2);
             }
+
+            @Override
+            public String toString() {
+                return "TANH";
+            }
         };
     }
-
 }

@@ -3,12 +3,9 @@ package net.porzel.functions;
 import java.util.Random;
 
 public abstract class WeightInitialization {
-    private static final int HE = 0, LECUN = 1, GLOROT = 2, XAVIER = 3, Test = 4;
-    private final int function;
+    public abstract void function(double[][][] field);
 
-    private WeightInitialization(int function) {
-        this.function = function;
-    }
+    public abstract void function(double[][] field);
 
     /**
      * The weight initialization function HE, which stands for "He-et-al.",
@@ -19,7 +16,7 @@ public abstract class WeightInitialization {
      * allowing for efficient and stable learning.
      * */
     public static WeightInitialization HE() {
-        return new WeightInitialization(HE) {
+        return new WeightInitialization() {
             @Override
             public void function(double[][][] field) {
                 Random random = new Random();
@@ -59,7 +56,7 @@ public abstract class WeightInitialization {
      * allowing for efficient and stable learning.
      */
     public static WeightInitialization LECUN() {
-        return new WeightInitialization(LECUN) {
+        return new WeightInitialization() {
             @Override
             public void function(double[][][] field) {
                 Random random = new Random();
@@ -101,7 +98,7 @@ public abstract class WeightInitialization {
      * many deep learning applications, and can help to improve the performance and convergence of neural networks.
      */
     public static WeightInitialization GLOROT() {
-        return new WeightInitialization(GLOROT) {
+        return new WeightInitialization() {
             @Override
             public void function(double[][][] field) {
                 Random random = new Random();
@@ -144,7 +141,7 @@ public abstract class WeightInitialization {
      * exploding gradient problems.
      */
     public static WeightInitialization XAVIER() {
-        return new WeightInitialization(XAVIER) {
+        return new WeightInitialization() {
             @Override
             public void function(double[][][] field) {
                 Random random = new Random();
@@ -172,8 +169,4 @@ public abstract class WeightInitialization {
             }
         };
     }
-
-    public abstract void function(double[][][] field);
-
-    public abstract void function(double[][] field);
 }
