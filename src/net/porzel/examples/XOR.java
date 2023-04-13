@@ -6,6 +6,8 @@ import net.porzel.functions.CostFunction;
 import net.porzel.functions.LossFunction;
 import net.porzel.functions.WeightInitialization;
 
+import java.io.File;
+
 public class XOR {
     public static void main(String[] args) {
         ConvolutionalNeuralNetwork neuralNetwork = new ConvolutionalNeuralNetwork(new int[] {2, 32, 16, 8, 4, 1})
@@ -14,6 +16,7 @@ public class XOR {
                 .setWeightInitializationFunction(WeightInitialization.LECUN())
                 .setLossFunction(LossFunction.BINARY_CROSS_ENTROPY_LOSS())
                 .setCostFunction(CostFunction.MEDIAN());
+
 
         double[][] input = new double[][]
                 {

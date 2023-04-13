@@ -1,9 +1,6 @@
 package net.porzel;
 
-import net.porzel.functions.ActivationFunction;
-import net.porzel.functions.CostFunction;
-import net.porzel.functions.LossFunction;
-import net.porzel.functions.WeightInitialization;
+import net.porzel.functions.*;
 
 import java.io.*;
 import java.util.Arrays;
@@ -20,6 +17,7 @@ public class ConvolutionalNeuralNetwork {
     private LossFunction lossFunction;
     private CostFunction costFunction;
 
+    private boolean softmax = false;
     private double dropout = 0;
 
     //TRAINING-, TEST- DATA
@@ -101,12 +99,13 @@ public class ConvolutionalNeuralNetwork {
     }
 
 
-    private ConvolutionalNeuralNetwork(int[] layers, double[][][] weights, double[][] biases, double learningRate, double dropout, ActivationFunction activationFunction, LossFunction lossFunction, CostFunction costFunction, int totalTrainedEpochs) {
+    private ConvolutionalNeuralNetwork(int[] layers, double[][][] weights, double[][] biases, double learningRate, double dropout, boolean softmax, ActivationFunction activationFunction, LossFunction lossFunction, CostFunction costFunction, int totalTrainedEpochs) {
         this.layers = layers;
         this.weights = weights;
         this.biases = biases;
         this.learningRate = learningRate;
         this.dropout = dropout;
+        this.softmax = softmax;
         this.activationFunction = activationFunction;
         this.lossFunction = lossFunction;
         this.costFunction = costFunction;
@@ -199,7 +198,10 @@ public class ConvolutionalNeuralNetwork {
             }
 
             // Apply the activation function to the values of the current layer.
-            activationFunction.function(temp);
+            if(softmax && layer == weights.length - 1)
+                SoftmaxActivationFunction.function(temp);
+            else
+                activationFunction.function(temp);
 
             // Set the input values for the next layer to be the values of the current layer.
             input = temp.clone();
@@ -242,7 +244,10 @@ public class ConvolutionalNeuralNetwork {
                 tempOutput[neuron] += biases[layer][neuron];
             }
 
-            activationFunction.function(tempOutput);
+            if(softmax && layer == weights.length - 1)
+                SoftmaxActivationFunction.function(tempOutput);
+            else
+                activationFunction.function(tempOutput);
 
             if (dropout > 0 && layer < weights.length - 2) {
                 int numNeuronsToDrop = (int) Math.round(dropout * weights[layer].length);
@@ -275,11 +280,20 @@ public class ConvolutionalNeuralNetwork {
             //ERROR CALCULATING OUTPUT LAYER
             neuronError[neuronError.length - 1][neuron] = (targetOutput[neuron] - outputs[outputs.length - 1][neuron]) * networkCost;
 
+            double[] derivatives;
+
+            if(softmax) {
+                derivatives = outputs[outputs.length - 1].clone();
+                SoftmaxActivationFunction.derivative(derivatives);
+            }
+            else
+                derivatives = Arrays.stream(outputs[outputs.length - 1]).map(x -> activationFunction.derivative(x)).toArray();
+
             //UPDATE WEIGHTS OUTPUT LAYER
             for (int weight = 0; weight < weights[neuronError.length - 1][neuron].length; weight++) {
-                weights[neuronError.length - 1][neuron][weight] += learningRate * neuronError[neuronError.length - 1][neuron] * outputs[neuronError.length - 1 - 1][weight] * activationFunction.derivative(outputs[outputs.length - 1][neuron]);
+                weights[neuronError.length - 1][neuron][weight] += learningRate * neuronError[neuronError.length - 1][neuron] * outputs[neuronError.length - 1 - 1][weight] * derivatives[neuron];
             }
-            biases[neuronError.length - 1][neuron] += neuronError[neuronError.length - 1][neuron] * learningRate * activationFunction.derivative(outputs[outputs.length - 1][neuron]);
+            biases[neuronError.length - 1][neuron] += neuronError[neuronError.length - 1][neuron] * learningRate * derivatives[neuron];
         }
 
 
@@ -382,7 +396,11 @@ public class ConvolutionalNeuralNetwork {
         }
 
 
-        while (neuralNetworkStatusPrinter.isAlive()) {}
+        try {
+            neuralNetworkStatusPrinter.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void train() {
@@ -405,6 +423,21 @@ public class ConvolutionalNeuralNetwork {
      */
     public void setDropout(double percentage) {
         dropout = percentage;
+    }
+
+    /**
+     This method sets the value of the softmax flag for the last layer of a neural network.
+     The method takes in a boolean value as input and sets the value of the class variable 'softmax'
+     to this input value. The 'softmax' flag is used to indicate whether the output of the last layer
+     of the neural network should be transformed using a softmax function or not.
+     If the 'softmax' flag is set to true, then the output of the last layer of the neural network
+     will be transformed using a softmax function. Otherwise, the output of the last layer will be
+     used as is, without any additional transformation.
+     @param value a boolean value indicating whether the output of the last layer should be transformed
+     using a softmax function or not.
+     */
+    public void setLastLayerSoftmax(boolean value) {
+        softmax = value;
     }
 
     /**
@@ -506,6 +539,7 @@ public class ConvolutionalNeuralNetwork {
             }
 
             out.writeDouble(dropout);
+            out.writeBoolean(softmax);
             out.writeInt(totalTrainedEpochs);
         } catch (IOException e) {
             e.printStackTrace();
@@ -562,10 +596,10 @@ public class ConvolutionalNeuralNetwork {
             LossFunction lossFunction = LossFunction.resolveLossFunction(in.readUTF());
             CostFunction costFunction = CostFunction.resolveCostFunction(in.readUTF());
             double dropout = in.readDouble();
+            boolean softmax = in.readBoolean();
             int totalTrainedEpochs = in.readInt();
 
-
-            return new ConvolutionalNeuralNetwork(layers, weights, biases, learningRate, dropout, activationFunction, lossFunction, costFunction, totalTrainedEpochs);
+            return new ConvolutionalNeuralNetwork(layers, weights, biases, learningRate, dropout, softmax, activationFunction, lossFunction, costFunction, totalTrainedEpochs);
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
