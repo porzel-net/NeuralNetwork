@@ -35,13 +35,14 @@ public abstract class ActivationFunction {
      @throws RuntimeException If the input string is not one of the valid activation functions.
      */
     public static ActivationFunction resolveActivationFunction(String function) {
-        return switch (function) {
-            case "RELU" -> ActivationFunction.RELU();
-            case "LEAKY_RELU" -> ActivationFunction.LEAKY_RELU();
-            case "SIGMOID" -> ActivationFunction.SIGMOID();
-            case "TANH" -> ActivationFunction.TANH();
-            default -> throw new RuntimeException("Activation function couldn't be resolved!");
-        };
+        if (function.startsWith("RELU")) return ActivationFunction.RELU();
+        else if (function.startsWith("LEAKY_RELU")) return ActivationFunction.LEAKY_RELU();
+        else if (function.startsWith("ELU"))
+            try { return ActivationFunction.ELU(Double.parseDouble(function.substring(function.indexOf("(") + 1, function.indexOf(")")))); }
+            catch (NumberFormatException e) { throw new RuntimeException("Could not parse ELU parameter as a double!"); }
+        else if (function.startsWith("SIGMOID")) return ActivationFunction.SIGMOID();
+        else if (function.startsWith("TANH")) return ActivationFunction.TANH();
+        else throw new RuntimeException("Activation function couldn't be resolved!");
     }
 
     /**
@@ -65,7 +66,7 @@ public abstract class ActivationFunction {
 
             @Override
             public String toString() {
-                return "RELU";
+                return "RELU()";
             }
         };
     }
@@ -96,7 +97,7 @@ public abstract class ActivationFunction {
 
             @Override
             public String toString() {
-                return "LEAKY_RELU";
+                return "LEAKY_RELU()";
             }
         };
     }
@@ -128,7 +129,7 @@ public abstract class ActivationFunction {
 
             @Override
             public String toString() {
-                return "SIGMOID";
+                return "SIGMOID()";
             }
         };
     }
@@ -159,7 +160,45 @@ public abstract class ActivationFunction {
 
             @Override
             public String toString() {
-                return "TANH";
+                return "TANH()";
+            }
+        };
+    }
+
+    /**
+
+     The Exponential Linear Unit (ELU) activation function is commonly used in neural networks due to
+     its ability to alleviate the vanishing gradient problem present in other activation functions,
+     such as the hyperbolic tangent (TANH). ELU produces outputs between -1 and infinity, and its
+     smooth, continuous shape allows for better representation of data with both positive and negative
+     features. However, ELU is computationally more expensive than other activation functions, and
+     its parameter alpha can be difficult to tune. Despite these drawbacks, ELU is a popular choice
+     for neural networks due to its effectiveness in reducing the vanishing gradient problem and
+     improving learning speed.
+     */
+    public static ActivationFunction ELU(double alpha){
+        return new ActivationFunction() {
+            @Override
+            public void function(double[] x) {
+                for (int i = 0; i < x.length; i++) {
+                    if (x[i] < 0) {
+                        x[i] = alpha * (Math.exp(x[i]) - 1);
+                    }
+                }
+            }
+
+            @Override
+            public double derivative(double x) {
+                if (x >= 0) {
+                    return 1;
+                } else {
+                    return alpha * Math.exp(x);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "ELU(" + alpha + ")";
             }
         };
     }

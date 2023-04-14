@@ -86,7 +86,15 @@ public class NumberRecognition {
                 .setLossFunction(LossFunction.CROSS_ENTROPY_LOSS())
                 .setCostFunction(CostFunction.MEDIAN());*/
 
-        ConvolutionalNeuralNetwork convolutionalNeuralNetwork = ConvolutionalNeuralNetwork.load(new File("numberRecognition-0.nn"));
+        ConvolutionalNeuralNetwork convolutionalNeuralNetwork = ConvolutionalNeuralNetwork.load(new File("numberRecognition-1.nn"));
+
+        convolutionalNeuralNetwork.setTrainingData(trainImages, trainLabels);
+        convolutionalNeuralNetwork.setTestData(testImages, testLabels);
+        convolutionalNeuralNetwork.setNumberOfProcessThreads(10);
+
+        //convolutionalNeuralNetwork.train(30000);
+        //convolutionalNeuralNetwork.save(new File("numberRecognition-1.nn"));
+
         for (int i = 0; i < 10; i++) {
 
             for (int j = 0; j < testImages.length; j++) {
@@ -94,22 +102,6 @@ public class NumberRecognition {
             }
 
             //convolutionalNeuralNetwork.save(new File("numberRecognition-" + i + ".nn"));
-        }
-
-
-        convolutionalNeuralNetwork.setLastLayerSoftmax(true);
-        convolutionalNeuralNetwork.setNumberOfProcessThreads(10);
-        convolutionalNeuralNetwork.setTrainingData(trainImages, trainLabels);
-        convolutionalNeuralNetwork.setTestData(testImages, testLabels);
-
-        for (int i = 0; i < 10; i++) {
-            convolutionalNeuralNetwork.train(10000);
-
-            for (int j = 0; j < 10; j++) {
-                ImageDrawer.showImage(testImages[j], accuracyInfo(convolutionalNeuralNetwork.propagation(testImages[j])));
-            }
-
-            convolutionalNeuralNetwork.save(new File("numberRecognition-" + i + ".nn"));
         }
     }
 
