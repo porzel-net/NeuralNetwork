@@ -358,7 +358,10 @@ public class ConvolutionalNeuralNetwork {
                     output.append(" ");
                 }
 
-                output.append("] ").append(trainedEpochs).append(" / ").append(epochs).append(" (").append((System.currentTimeMillis() - startTime) / 1000).append("s)");
+                output.append("] ").append(trainedEpochs).append(" / ").append(epochs).append(" (").append((System.currentTimeMillis() - startTime) / 1000).append("s) ").append((int)(trainedEpochs / ((double)(System.currentTimeMillis() - startTime) / 1000))).append(" epochs/s ");
+
+                if (costFunction != null)
+                    output.append(" Cost: ").append(costFunction.getCost());
 
                 System.out.print(output);
 
